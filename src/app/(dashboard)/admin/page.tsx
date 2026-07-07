@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
 import { Card, Badge, Button } from "@/components/ui";
 import { AdminUserActions } from "@/components/admin/admin-user-actions";
+import { LanguageSettings } from "@/components/admin/language-settings";
+import { getEnabledLocales } from "@/lib/settings";
 
 export default async function AdminPage() {
   const session = await auth();
@@ -19,6 +21,8 @@ export default async function AdminPage() {
     take: 20,
     orderBy: { createdAt: "desc" },
   });
+
+  const enabledLocales = await getEnabledLocales();
 
   const stats = {
     users: users.length,
@@ -48,6 +52,9 @@ export default async function AdminPage() {
           </Card>
         ))}
       </div>
+
+      {/* Language settings */}
+      <LanguageSettings enabled={enabledLocales} />
 
       {/* Users table */}
       <Card className="overflow-hidden">

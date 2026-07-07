@@ -157,6 +157,14 @@ model WebhookDelivery {
   @@index([submissionId])
 }
 
+// ───────────────────────────── App settings (admin-managed) ─────────────────────────────
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
 // ───────────────────────────── Audit (admin) ─────────────────────────────
 
 model AuditLog {

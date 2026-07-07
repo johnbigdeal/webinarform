@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { FormBuilder } from "@/components/builder/form-builder";
+import { getEnabledLocales } from "@/lib/settings";
 
 export default async function BuilderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -15,5 +16,7 @@ export default async function BuilderPage({ params }: { params: Promise<{ id: st
   if (!form) return notFound();
   if (form.ownerId !== session.user.id && session.user.role !== "ADMIN") return notFound();
 
-  return <FormBuilder form={JSON.parse(JSON.stringify(form))} userPlan={session.user.plan} />;
+  const enabledLocales = await getEnabledLocales();
+
+  return <FormBuilder form={JSON.parse(JSON.stringify(form))} userPlan={session.user.plan} enabledLocales={enabledLocales} />;
 }

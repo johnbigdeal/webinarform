@@ -4,6 +4,9 @@ import { Button, Input, Label, Textarea, Card, Badge } from "@/components/ui";
 import type { Plan } from "@/generated/prisma/client";
 import { useState } from "react";
 import { isWithinLimit } from "@/lib/plans";
+import type { Locale } from "@/lib/i18n";
+
+const LOCALE_LABELS: Record<Locale, string> = { en: "English", es: "Español" };
 
 type Props = {
   slug: string;
@@ -23,6 +26,7 @@ type Props = {
   tags: string[];
   setTags: (v: string[]) => void;
   userPlan: Plan;
+  enabledLocales: Locale[];
 };
 
 export function FormSettingsEditor(p: Props) {
@@ -51,10 +55,10 @@ export function FormSettingsEditor(p: Props) {
         <h2 className="text-lg font-semibold text-gray-900">Text content</h2>
         <p className="mt-1 text-sm text-gray-600">Provide content in English and Spanish. Respondents pick the language.</p>
         <div className="mt-4 flex flex-col gap-4">
-          <Section title="Title" value={p.title} onChange={p.setTitle} />
-          <Section title="Description" value={p.description} onChange={p.setDescription} textarea />
-          <Section title="Submit button label" value={p.submitLabel} onChange={p.setSubmitLabel} />
-          <Section title="Thank-you message (after submit)" value={p.thankYou} onChange={p.setThankYou} textarea />
+          <Section title="Title" value={p.title} onChange={p.setTitle} enabledLocales={p.enabledLocales} />
+          <Section title="Description" value={p.description} onChange={p.setDescription} enabledLocales={p.enabledLocales} textarea />
+          <Section title="Submit button label" value={p.submitLabel} onChange={p.setSubmitLabel} enabledLocales={p.enabledLocales} />
+          <Section title="Thank-you message (after submit)" value={p.thankYou} onChange={p.setThankYou} enabledLocales={p.enabledLocales} textarea />
         </div>
       </Card>
 
@@ -117,41 +121,34 @@ function Section({
   title,
   value,
   onChange,
+  enabledLocales,
   textarea,
 }: {
   title: string;
   value: Record<string, string>;
   onChange: (v: Record<string, string>) => void;
+  enabledLocales: Locale[];
   textarea?: boolean;
 }) {
+  const cols = enabledLocales.length === 1 ? "sm:grid-cols-1" : "sm:grid-cols-2";
   return (
     <div className="rounded-lg border border-gray-200 p-4">
       <h3 className="mb-3 text-sm font-semibold text-gray-700">{title}</h3>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="flex flex-col gap-1">
-          <Label className="text-xs text-gray-500">English</Label>
-          {textarea ? (
-            <Textarea
-              rows={2}
-              value={value.en ?? ""}
-              onChange={(e) => onChange({ ...value, en: e.target.value })}
-            />
-          ) : (
-            <Input value={value.en ?? ""} onChange={(e) => onChange({ ...value, en: e.target.value })} />
-          )}
-        </div>
-        <div className="flex flex-col gap-1">
-          <Label className="text-xs text-gray-500">Spanish / Español</Label>
-          {textarea ? (
-            <Textarea
-              rows={2}
-              value={value.es ?? ""}
-              onChange={(e) => onChange({ ...value, es: e.target.value })}
-            />
-          ) : (
-            <Input value={value.es ?? ""} onChange={(e) => onChange({ ...value, es: e.target.value })} />
-          )}
-        </div>
+      <div className={`grid gap-3 ${cols}`}>
+        {enabledLocales.map((locale) => (
+          <div key={locale} className="flex flex-col gap-1">
+            <Label className="text-xs text-gray-500">{LOCALE_LABELS[locale]}</Label>
+            {textarea ? (
+              <Textarea
+                rows={2}
+                value={value[locale] ?? ""}
+                onChange={(e) => onChange({ ...value, [locale]: e.target.value })}
+              />
+            ) : (
+              <Input value={value[locale] ?? ""} onChange={(e) => onChange({ ...value, [locale]: e.target.value })} />
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

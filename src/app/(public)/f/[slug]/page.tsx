@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { PublicForm } from "@/components/public/public-form";
+import { getEnabledLocales } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,9 @@ export default async function PublicFormPage({ params }: { params: Promise<{ slu
   });
   if (!form) return notFound();
 
-  return <PublicForm form={JSON.parse(JSON.stringify(form))} />;
+  const enabledLocales = await getEnabledLocales();
+
+  return <PublicForm form={JSON.parse(JSON.stringify(form))} enabledLocales={enabledLocales} />;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {

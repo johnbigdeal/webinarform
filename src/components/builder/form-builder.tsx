@@ -10,6 +10,7 @@ import { SubmissionsView } from "@/components/builder/submissions-view";
 import { updateFormAction, deleteFormAction } from "@/server/actions";
 import type { FormInput, QuestionInput, EventDayInput } from "@/lib/validations";
 import type { Plan } from "@/generated/prisma/client";
+import type { Locale } from "@/lib/i18n";
 
 type Form = {
   id: string;
@@ -37,7 +38,7 @@ const tabs: { id: Tab; label: string }[] = [
   { id: "submissions", label: "Submissions" },
 ];
 
-export function FormBuilder({ form, userPlan }: { form: Form; userPlan: Plan }) {
+export function FormBuilder({ form, userPlan, enabledLocales }: { form: Form; userPlan: Plan; enabledLocales: Locale[] }) {
   const [tab, setTab] = useState<Tab>("questions");
   const [saving, startSave] = useTransition();
   const [savedMsg, setSavedMsg] = useState<string | null>(null);
@@ -153,10 +154,10 @@ export function FormBuilder({ form, userPlan }: { form: Form; userPlan: Plan }) 
 
       {/* Tab content */}
       {tab === "questions" && (
-        <QuestionsEditor questions={questions} setQuestions={setQuestions} userPlan={userPlan} />
+        <QuestionsEditor questions={questions} setQuestions={setQuestions} userPlan={userPlan} enabledLocales={enabledLocales} />
       )}
       {tab === "events" && (
-        <EventDaysEditor eventDays={eventDays} setEventDays={setEventDays} userPlan={userPlan} />
+        <EventDaysEditor eventDays={eventDays} setEventDays={setEventDays} userPlan={userPlan} enabledLocales={enabledLocales} />
       )}
       {tab === "design" && (
         <FormSettingsEditor
@@ -169,6 +170,7 @@ export function FormBuilder({ form, userPlan }: { form: Form; userPlan: Plan }) 
           accentColor={accentColor} setAccentColor={setAccentColor}
           tags={tags} setTags={setTags}
           userPlan={userPlan}
+          enabledLocales={enabledLocales}
         />
       )}
       {tab === "webhook" && (

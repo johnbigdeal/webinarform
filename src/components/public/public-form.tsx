@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Button, Input, Label, Textarea, Card } from "@/components/ui";
-import { t, type Locale, SUPPORTED_LOCALES } from "@/lib/i18n";
+import { t, type Locale } from "@/lib/i18n";
 import type { SubmitFormInput } from "@/lib/validations";
 
 type Option = { id: string; label: Record<string, string>; points: number };
@@ -35,8 +35,8 @@ type Form = {
 
 type AnswerMap = Record<string, { value?: string | number | null; optionIds: string[]; points: number }>;
 
-export function PublicForm({ form }: { form: Form }) {
-  const [locale, setLocale] = useState<Locale>("en");
+export function PublicForm({ form, enabledLocales }: { form: Form; enabledLocales: Locale[] }) {
+  const [locale, setLocale] = useState<Locale>(enabledLocales[0] ?? "en");
   const [answers, setAnswers] = useState<AnswerMap>({});
   const [eventDayId, setEventDayId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -140,7 +140,7 @@ export function PublicForm({ form }: { form: Form }) {
 
   if (done) {
     return (
-      <Shell form={form} locale={locale} setLocale={setLocale} accent={accent}>
+      <Shell form={form} locale={locale} setLocale={setLocale} accent={accent} enabledLocales={enabledLocales}>
         <Card className="mx-auto max-w-xl p-8 text-center">
           <div className="mb-3 text-4xl">✅</div>
           <h2 className="text-xl font-bold text-gray-900">
@@ -152,7 +152,7 @@ export function PublicForm({ form }: { form: Form }) {
   }
 
   return (
-    <Shell form={form} locale={locale} setLocale={setLocale} accent={accent}>
+    <Shell form={form} locale={locale} setLocale={setLocale} accent={accent} enabledLocales={enabledLocales}>
       <form onSubmit={submit} className="mx-auto flex max-w-xl flex-col gap-6 pb-12">
         {/* Event day selector */}
         {form.eventDays.length > 0 && (
@@ -220,35 +220,44 @@ function Shell({
   locale,
   setLocale,
   accent,
+  enabledLocales,
   children,
 }: {
   form: Form;
   locale: Locale;
   setLocale: (l: Locale) => void;
   accent: string;
+  enabledLocales: Locale[];
   children: React.ReactNode;
 }) {
   return (
     <div className="min-h-dvh bg-gray-50">
       {/* Locale switcher */}
-      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white/80 px-4 py-2 backdrop-blur">
-        <span className="text-xs font-medium text-gray-400">WebinarForm</span>
-        <div className="flex gap-1">
-          {SUPPORTED_LOCALES.map((l) => (
-            <button
-              key={l}
-              onClick={() => setLocale(l)}
-              className={
-                "rounded px-2 py-0.5 text-xs font-medium uppercase " +
-                (locale === l ? "text-white" : "text-gray-500 hover:text-gray-900")
-              }
-              style={locale === l ? { backgroundColor: accent } : undefined}
-            >
-              {l}
-            </button>
-          ))}
+      {enabledLocales.length > 1 && (
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white/80 px-4 py-2 backdrop-blur">
+          <span className="text-xs font-medium text-gray-400">WebinarForm</span>
+          <div className="flex gap-1">
+            {enabledLocales.map((l) => (
+              <button
+                key={l}
+                onClick={() => setLocale(l)}
+                className={
+                  "rounded px-2 py-0.5 text-xs font-medium uppercase " +
+                  (locale === l ? "text-white" : "text-gray-500 hover:text-gray-900")
+                }
+                style={locale === l ? { backgroundColor: accent } : undefined}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+      {enabledLocales.length <= 1 && (
+        <div className="flex items-center justify-between px-4 py-2">
+          <span className="text-xs font-medium text-gray-400">WebinarForm</span>
+        </div>
+      )}
 
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         {/* Logo + title */}

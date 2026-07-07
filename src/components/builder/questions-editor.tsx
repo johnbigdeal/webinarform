@@ -3,6 +3,9 @@
 import { Button, Input, Label, Card, Badge } from "@/components/ui";
 import type { QuestionInput } from "@/lib/validations";
 import type { Plan } from "@/generated/prisma/client";
+import type { Locale } from "@/lib/i18n";
+
+const LOCALE_LABELS: Record<Locale, string> = { en: "EN", es: "ES" };
 
 const TYPES: { value: QuestionInput["type"]; label: string; hint: string }[] = [
   { value: "TEXT", label: "Short text", hint: "Single-line answer" },
@@ -21,10 +24,12 @@ export function QuestionsEditor({
   questions,
   setQuestions,
   userPlan,
+  enabledLocales,
 }: {
   questions: QuestionInput[];
   setQuestions: (q: QuestionInput[]) => void;
   userPlan: Plan;
+  enabledLocales: Locale[];
 }) {
   const limit = userPlan === "PAID" ? Infinity : 5;
   const canAdd = questions.length < limit;
@@ -100,6 +105,7 @@ export function QuestionsEditor({
             key={q.id}
             index={i}
             question={q}
+            enabledLocales={enabledLocales}
             onChange={(patch) => update(q.id!, patch)}
             onRemove={() => remove(q.id!)}
             onMoveUp={() => move(q.id!, -1)}
@@ -116,6 +122,7 @@ export function QuestionsEditor({
 function QuestionCard({
   index,
   question,
+  enabledLocales,
   onChange,
   onRemove,
   onMoveUp,
@@ -125,6 +132,7 @@ function QuestionCard({
 }: {
   index: number;
   question: QuestionInput;
+  enabledLocales: Locale[];
   onChange: (patch: Partial<QuestionInput>) => void;
   onRemove: () => void;
   onMoveUp: () => void;
@@ -152,10 +160,22 @@ function QuestionCard({
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <LocalizedInput label="Label (EN)" value={question.label.en ?? ""} onChange={(v) => onChange({ label: { ...question.label, en: v } })} />
-        <LocalizedInput label="Label (ES)" value={question.label.es ?? ""} onChange={(v) => onChange({ label: { ...question.label, es: v } })} />
-        <LocalizedInput label="Help text (EN)" value={question.helpText?.en ?? ""} onChange={(v) => onChange({ helpText: v ? { ...question.helpText, en: v } : null })} />
-        <LocalizedInput label="Help text (ES)" value={question.helpText?.es ?? ""} onChange={(v) => onChange({ helpText: v ? { ...question.helpText, es: v } : null })} />
+        {enabledLocales.map((locale) => (
+          <LocalizedInput
+            key={locale}
+            label={`Label (${LOCALE_LABELS[locale]})`}
+            value={question.label[locale] ?? ""}
+            onChange={(v) => onChange({ label: { ...question.label, [locale]: v } })}
+          />
+        ))}
+        {enabledLocales.map((locale) => (
+          <LocalizedInput
+            key={`help-${locale}`}
+            label={`Help text (${LOCALE_LABELS[locale]})`}
+            value={question.helpText?.[locale] ?? ""}
+            onChange={(v) => onChange({ helpText: v ? { ...question.helpText, [locale]: v } : null })}
+          />
+        ))}
       </div>
 
       <label className="mt-4 flex items-center gap-2 text-sm text-gray-700">
@@ -184,17 +204,19 @@ function QuestionCard({
           </div>
           <div className="flex flex-col gap-2">
             {question.options.map((opt, oi) => (
-              <div key={opt.id} className="grid grid-cols-1 items-center gap-2 rounded-lg border border-gray-200 p-2 sm:grid-cols-[1fr_1fr_5rem_auto]">
-                <Input placeholder="Option (EN)" value={opt.label.en ?? ""} onChange={(e) => {
-                  const options = [...question.options];
-                  options[oi] = { ...opt, label: { ...opt.label, en: e.target.value } };
-                  onChange({ options });
-                }} />
-                <Input placeholder="Option (ES)" value={opt.label.es ?? ""} onChange={(e) => {
-                  const options = [...question.options];
-                  options[oi] = { ...opt, label: { ...opt.label, es: e.target.value } };
-                  onChange({ options });
-                }} />
+              <div key={opt.id} className="grid grid-cols-1 items-center gap-2 rounded-lg border border-gray-200 p-2 sm:grid-cols-2">
+                {enabledLocales.map((locale) => (
+                  <Input
+                    key={locale}
+                    placeholder={`Option (${LOCALE_LABELS[locale]})`}
+                    value={opt.label[locale] ?? ""}
+                    onChange={(e) => {
+                      const options = [...question.options];
+                      options[oi] = { ...opt, label: { ...opt.label, [locale]: e.target.value } };
+                      onChange({ options });
+                    }}
+                  />
+                ))}
                 <Input type="number" placeholder="pts" value={opt.points} onChange={(e) => {
                   const options = [...question.options];
                   options[oi] = { ...opt, points: Number(e.target.value) };

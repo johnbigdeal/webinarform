@@ -7,6 +7,8 @@ import { generateSlug } from "@/lib/utils";
 import { isWithinLimit } from "@/lib/plans";
 import { formSchema } from "@/lib/validations";
 import type { FormInput } from "@/lib/validations";
+import { ENABLED_LOCALES_KEY } from "@/lib/settings";
+import { isLocale, type Locale } from "@/lib/i18n";
 
 async function requireUser() {
   const session = await auth();
@@ -174,5 +176,32 @@ export async function toggleRoleAction(userId: string) {
     data: { role: target.role === "ADMIN" ? "USER" : "ADMIN" },
   });
   revalidatePath("/admin");
+  return { ok: true };
+}
+
+// ─────────────── Admin: toggle enabled locales ───────────────
+
+export async function setEnabledLocalesAction(locales: string[]) {
+  const user = await requireUser();
+  if (user.role !== "ADMIN") return { error: "Admin only" };
+
+  const clean = locales.filter((l): l is Locale => isLocale(l));
+  if (clean.length === 0) return { error: "At least one language must be enabled" };
+
+  await prisma.setting.upsert({
+    where: { key: ENABLED_LOCALES_KEY },
+    update: { value: clean },
+    create: { key: ENABLED_LOCALES_KEY, value: clean },
+  });
+  await prisma.auditLog.create({
+    data: {
+      actorId: user.id,
+      action: "locales.update",
+      target: ENABLED_LOCALES_KEY,
+      meta: { locales: clean },
+    },
+  });
+  revalidatePath("/admin");
+  revalidatePath("/dashboard");
   return { ok: true };
 }

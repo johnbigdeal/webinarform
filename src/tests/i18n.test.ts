@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { t, parseLocale, isLocale, ui, SUPPORTED_LOCALES, DEFAULT_LOCALE } from "@/lib/i18n";
+import { t, parseLocale, isLocale, ui, SUPPORTED_LOCALES, DEFAULT_LOCALE, normalizeEnabledLocales } from "@/lib/i18n";
 
 describe("i18n", () => {
   it("resolves localized text for the requested locale", () => {
@@ -44,5 +44,18 @@ describe("i18n", () => {
     expect(ui("common.save", "en")).toBe("Save");
     expect(ui("common.save", "es")).toBe("Guardar");
     expect(ui("nav.signin", "es")).toBe("Iniciar sesión");
+  });
+
+  it("normalizeEnabledLocales filters to known locales", () => {
+    expect(normalizeEnabledLocales(["en", "es"])).toEqual(["en", "es"]);
+    expect(normalizeEnabledLocales(["es"])).toEqual(["es"]);
+    expect(normalizeEnabledLocales(["en", "fr", "xx"])).toEqual(["en"]);
+  });
+
+  it("normalizeEnabledLocales falls back when empty/invalid", () => {
+    expect(normalizeEnabledLocales([])).toEqual([DEFAULT_LOCALE]);
+    expect(normalizeEnabledLocales(["fr"])).toEqual([DEFAULT_LOCALE]);
+    expect(normalizeEnabledLocales(null)).toEqual([...SUPPORTED_LOCALES]);
+    expect(normalizeEnabledLocales(undefined)).toEqual([...SUPPORTED_LOCALES]);
   });
 });

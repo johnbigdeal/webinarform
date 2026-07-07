@@ -1,6 +1,10 @@
+// All locales the app knows how to render. Admin enables/disables a subset.
 export const SUPPORTED_LOCALES = ["en", "es"] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = "en";
+
+/** Locales currently enabled by the admin (fallback to all if unset). */
+export const ENABLED_LOCALES_DEFAULT: Locale[] = [...SUPPORTED_LOCALES];
 
 /**
  * A multilanguage string value stored in the DB as JSON.
@@ -33,6 +37,14 @@ export function isLocale(value: string): value is Locale {
 export function parseLocale(value: string | null | undefined): Locale {
   if (value && isLocale(value)) return value;
   return DEFAULT_LOCALE;
+}
+
+/** Coerce an unknown array (e.g. from DB JSON) into a clean Locale[]. */
+export function normalizeEnabledLocales(raw: unknown): Locale[] {
+  if (!Array.isArray(raw)) return ENABLED_LOCALES_DEFAULT;
+  const locales = raw.filter((l): l is Locale => typeof l === "string" && isLocale(l));
+  if (locales.length === 0) return [DEFAULT_LOCALE];
+  return locales;
 }
 
 /** UI strings for the dashboard / chrome (not form content). */

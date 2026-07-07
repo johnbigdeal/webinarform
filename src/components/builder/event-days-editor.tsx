@@ -3,15 +3,20 @@
 import { Button, Input, Label, Card, Badge } from "@/components/ui";
 import type { EventDayInput } from "@/lib/validations";
 import type { Plan } from "@/generated/prisma/client";
+import type { Locale } from "@/lib/i18n";
+
+const LOCALE_LABELS: Record<Locale, string> = { en: "EN", es: "ES" };
 
 export function EventDaysEditor({
   eventDays,
   setEventDays,
   userPlan,
+  enabledLocales,
 }: {
   eventDays: EventDayInput[];
   setEventDays: (d: EventDayInput[]) => void;
   userPlan: Plan;
+  enabledLocales: Locale[];
 }) {
   const allowed = userPlan === "PAID";
 
@@ -66,14 +71,16 @@ export function EventDaysEditor({
                 <Label>Auto-tag (webhook)</Label>
                 <Input placeholder="day-1" value={d.autoTag} onChange={(e) => update(d.id!, { autoTag: e.target.value })} />
               </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Label (EN)</Label>
-                <Input placeholder="Day 1 — July 10" value={d.label.en ?? ""} onChange={(e) => update(d.id!, { label: { ...d.label, en: e.target.value } })} />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Label (ES)</Label>
-                <Input placeholder="Día 1 — 10 julio" value={d.label.es ?? ""} onChange={(e) => update(d.id!, { label: { ...d.label, es: e.target.value } })} />
-              </div>
+              {enabledLocales.map((locale) => (
+                <div key={locale} className="flex flex-col gap-1.5">
+                  <Label>Label ({LOCALE_LABELS[locale]})</Label>
+                  <Input
+                    placeholder={locale === "es" ? "Día 1 — 10 julio" : "Day 1 — July 10"}
+                    value={d.label[locale] ?? ""}
+                    onChange={(e) => update(d.id!, { label: { ...d.label, [locale]: e.target.value } })}
+                  />
+                </div>
+              ))}
               <div className="sm:col-span-2">
                 <button onClick={() => remove(d.id!)} className="text-sm text-red-500 hover:text-red-700">Remove day</button>
               </div>
