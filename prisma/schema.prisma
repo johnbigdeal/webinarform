@@ -1,0 +1,172 @@
+// WebinarForm — Prisma schema (Prisma 7)
+// Database: PostgreSQL on Railway
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ───────────────────────────── Auth & users ─────────────────────────────
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Plan {
+  FREE
+  PAID
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         Role     @default(USER)
+  plan         Plan     @default(FREE)
+  forms        Form[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+}
+
+// ───────────────────────────── Forms ─────────────────────────────
+
+model Form {
+  id          String   @id @default(cuid())
+  slug        String   @unique // public URL: /f/[slug]
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  // Editable text (multilanguage values stored as JSON: { en: "...", es: "..." })
+  title       Json
+  description Json?
+  submitLabel Json   @default("{\"en\":\"Submit\",\"es\":\"Enviar\"}")
+  thankYou    Json?  // post-submit message
+  // Branding / frontend (editable)
+  logoUrl     String?
+  accentColor String @default("#2563eb")
+  // Webhook
+  webhookUrl  String?
+  webhookEnabled Boolean @default(true)
+  // Tags
+  tags        FormTag[]
+  // Content
+  questions   Question[]
+  eventDays   EventDay[]
+  submissions Submission[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([ownerId])
+}
+
+enum QuestionType {
+  TEXT        // free-text / survey open answer
+  TEXTAREA    // long free-text
+  CHOICE      // single-choice (radio / select)
+  MULTI       // multiple-choice (checkbox)
+  SCALE       // numeric scale (e.g. 1-5 / NPS)
+  RATING      // star rating 1-5
+}
+
+model Question {
+  id          String       @id @default(cuid())
+  formId      String
+  form        Form         @relation(fields: [formId], references: [id], onDelete: Cascade)
+  type        QuestionType
+  // Multilanguage labels: { en: "...", es: "..." }
+  label       Json
+  helpText    Json?
+  required    Boolean      @default(true)
+  // Options for CHOICE / MULTI / SCALE — each option is multilanguage + has points
+  // [{ id, label: {en,es}, points: number }]
+  options     Json         @default("[]")
+  // Scale config for SCALE: { min, max, step, minLabel: {en,es}, maxLabel: {en,es}, pointsPerUnit }
+  scaleConfig Json?
+  // Branching / skip logic — array of rules evaluated in order
+  // [{ id, action: "show"|"hide"|"skip_to", targetQuestionId, condition: { optionId|value, op: "eq"|"ne"|"gt"|"lt" } }]
+  logic       Json         @default("[]")
+  // Points awarded when this question is answered (independent of options)
+  points      Int          @default(0)
+  order       Int          @default(0)
+
+  @@index([formId])
+}
+
+model EventDay {
+  id      String   @id @default(cuid())
+  formId  String
+  form    Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  date    DateTime
+  // Multilanguage label: { en: "Day 1 — July 10", es: "Día 1 — 10 julio" }
+  label   Json
+  // Tag automatically attached to webhook payload when this day is selected
+  autoTag String
+  order   Int      @default(0)
+
+  @@index([formId])
+}
+
+model FormTag {
+  id    String @id @default(cuid())
+  formId String
+  form  Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+  tag   String // editable tags on the form, included in webhook payload
+  @@unique([formId, tag])
+  @@index([formId])
+}
+
+// ───────────────────────────── Submissions & webhook delivery ─────────────────────────────
+
+model Submission {
+  id        String            @id @default(cuid())
+  formId    String
+  form      Form              @relation(fields: [formId], references: [id], onDelete: Cascade)
+  // { questionId: { value, optionIds?: string[], points: number } }
+  answers   Json
+  // resolved tags = form tags + event-day autoTag
+  tags      String[]          @default([])
+  totalPoints Int             @default(0)
+  eventDayId String?
+  language  String            @default("en")
+  createdAt DateTime          @default(now())
+  deliveries WebhookDelivery[]
+
+  @@index([formId])
+  @@index([createdAt])
+}
+
+model WebhookDelivery {
+  id           String     @id @default(cuid())
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  url          String
+  status       Int        // HTTP status, or 0 for network error
+  attempt      Int
+  success      Boolean
+  responseBody String?
+  error        String?
+  createdAt    DateTime   @default(now())
+
+  @@index([submissionId])
+}
+
+// ───────────────────────────── Audit (admin) ─────────────────────────────
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String   // e.g. "plan.toggle", "form.delete"
+  target    String
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([actorId])
+  @@index([createdAt])
+}

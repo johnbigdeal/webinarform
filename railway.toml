@@ -1,0 +1,8 @@
+[deploy]
+buildCommand = "npm install && npm run build"
+startCommand = "npm start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 60
+
+[deploy.rollback]
+enabled = true
