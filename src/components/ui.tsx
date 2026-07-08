@@ -12,7 +12,7 @@ const buttonVariants: Record<ButtonVariant, string> = {
   secondary:
     "bg-white text-[color:var(--text)] border border-gray-200 hover:shadow-sm active:translate-y-[1px]",
   ghost: "bg-transparent text-[color:var(--text)] hover:bg-gray-50",
-  danger: "bg-red-600 text-white hover:bg-red-700",
+  danger: "bg-[color:var(--danger-500)] text-white hover:bg-[color:var(--danger-700)]",
 };
 
 const buttonSizes: Record<ButtonSize, string> = {

@@ -11,20 +11,42 @@
   --brand-600: #1d4ed8;
   --brand-700: #1e40af;
 
+  /* Semantic surface tokens */
   --background: #f8fafc;
   --card: #ffffff;
+  --card-border: rgba(15,23,42,0.06);
+  --surface-contrast: #f1f5f9;
+
   --muted: #6b7280;
   --text: #0f172a;
   --glass: rgba(255,255,255,0.6);
+
+  /* Danger */
+  --danger-50: #fff1f2;
+  --danger-100: #ffe4e6;
+  --danger-500: #dc2626;
+  --danger-700: #991b1b;
+  --danger-surface: #fff5f5;
+  --danger-text: #7f1d1d;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #071025;
     --card: #071a2b;
+    --card-border: rgba(255,255,255,0.04);
+    --surface-contrast: #0b1620;
+
     --muted: #9ca3af;
     --text: #e6eef8;
     --glass: rgba(8,16,24,0.5);
+
+    --danger-50: #2b0a0a;
+    --danger-100: #3b0f0f;
+    --danger-500: #ff6b6b;
+    --danger-700: #ff4d4d;
+    --danger-surface: #071219;
+    --danger-text: #ffb4b4;
   }
 }
 
@@ -38,7 +60,88 @@
   background: var(--card);
   border-radius: var(--radius-lg);
   box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+  border: 1px solid var(--card-border);
+  color: var(--text);
 }
+
+/* Danger card (used for delete zones) — overrides when border-red classes are used */
+.card.border-red-200,
+.card[data-danger="true"] {
+  background: linear-gradient(180deg, var(--danger-surface), rgba(0,0,0,0));
+  border-color: rgba(220,38,38,0.12);
+  color: var(--danger-text);
+  box-shadow: 0 6px 18px rgba(220,38,38,0.06);
+}
+
+/* Typeform-like shell */
+.typeform-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: linear-gradient(180deg, rgba(37,99,235,0.03), transparent 40%);
+  padding: 2.5rem 1rem;
+}
+
+.typeform-card {
+  width: 100%;
+  max-width: 720px;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 2.25rem;
+  box-shadow: 0 10px 30px rgba(16,24,40,0.08);
+  transition: transform 320ms cubic-bezier(.2,.9,.25,1), opacity 240ms ease;
+}
+
+/* Question transitions */
+.q-enter {
+  transform: translateX(20px) scale(0.995);
+  opacity: 0;
+}
+.q-enter-active {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+}
+.q-exit {
+  transform: translateX(-20px) scale(0.995);
+  opacity: 0;
+}
+
+/* Large CTA */
+.cta-lg {
+  height: 56px;
+  border-radius: 12px;
+  padding: 0 1.25rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Progress bar */
+.progress-outer {
+  height: 8px;
+  background: linear-gradient(90deg, rgba(15,23,42,0.06), rgba(15,23,42,0.03));
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-inner {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-500), var(--brand-600));
+  transition: width 420ms cubic-bezier(.2,.9,.25,1);
+}
+
+/* Mobile friendly */
+@media (max-width: 640px) {
+  .typeform-card { padding: 1.25rem; border-radius: 10px; }
+}
+
+/* Small helpers */
+.center { display: flex; align-items: center; justify-content: center; }
+
+body { background: var(--background); color: var(--text); font-family: var(--font-sans); }
 
 /* Typeform-like shell */
 .typeform-shell {
