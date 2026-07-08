@@ -39,6 +39,10 @@ export const questionTypeSchema = z.enum([
   "MULTI",
   "SCALE",
   "RATING",
+  "EMAIL",
+  "PHONE",
+  "DATE",
+  "FILE",
 ]);
 
 const questionOptionSchema = z.object({

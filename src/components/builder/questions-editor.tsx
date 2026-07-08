@@ -14,6 +14,10 @@ const TYPES: { value: QuestionInput["type"]; label: string; hint: string }[] = [
   { value: "MULTI", label: "Multiple choice", hint: "Checkboxes — many options" },
   { value: "SCALE", label: "Scale", hint: "Numeric range (e.g. 1–5)" },
   { value: "RATING", label: "Rating", hint: "Stars 1–5" },
+  { value: "EMAIL", label: "Email", hint: "Email address field" },
+  { value: "PHONE", label: "Phone", hint: "Phone number field" },
+  { value: "DATE", label: "Date", hint: "Date picker" },
+  { value: "FILE", label: "File upload", hint: "Upload a small file (image/pdf)" },
 ];
 
 function uid() {

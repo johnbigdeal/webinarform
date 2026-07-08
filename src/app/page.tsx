@@ -3,44 +3,74 @@ import { Button } from "@/components/ui";
 
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col items-center justify-center gap-8 px-6 py-16 text-center">
-      <div className="flex items-center gap-2 text-blue-600">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="4" width="18" height="16" rx="2" />
-          <path d="M7 8h10M7 12h6M7 16h4" />
-        </svg>
-        <span className="text-2xl font-bold tracking-tight text-gray-900">WebinarForm</span>
-      </div>
-
-      <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-        Build webinar forms that deliver to your app
-      </h1>
-      <p className="max-w-xl text-lg text-gray-600">
-        Create multilingual registration forms with custom questions, scoring, branching logic,
-        and event-day tagging. Every submission is sent to your webhook — automatically.
-      </p>
-
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        <Link href="/signup">
-          <Button size="lg">Get started free</Button>
-        </Link>
-        <Link href="/login">
-          <Button size="lg" variant="secondary">Sign in</Button>
-        </Link>
-      </div>
-
-      <div className="grid w-full gap-4 text-left sm:grid-cols-3 mt-8">
-        {[
-          { t: "Custom questions", d: "Text, choice, scale, rating — with points and branching logic." },
-          { t: "Event-day tagging", d: "Selecting an event day auto-tags the webhook payload." },
-          { t: "Multilingual", d: "EN + ES out of the box; respondents pick their language." },
-        ].map((f) => (
-          <div key={f.t} className="rounded-xl border border-gray-200 bg-white p-4">
-            <h3 className="font-semibold text-gray-900">{f.t}</h3>
-            <p className="mt-1 text-sm text-gray-600">{f.d}</p>
+    <main className="mx-auto flex min-h-dvh max-w-4xl flex-col items-center justify-center gap-8 px-6 py-20 text-center">
+      <header className="flex w-full items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 rounded-lg bg-[color:var(--brand-500)] center text-white shadow">WF</div>
+          <div>
+            <div className="text-sm font-semibold text-[color:var(--muted)]">WebinarForm</div>
+            <div className="text-xs text-[color:var(--muted)]">Forms + webhooks • EN/ES</div>
           </div>
-        ))}
-      </div>
+        </div>
+        <nav className="flex items-center gap-3">
+          <Link href="/login"><Button variant="ghost" size="sm">Sign in</Button></Link>
+          <Link href="/signup"><Button size="sm">Get started</Button></Link>
+        </nav>
+      </header>
+
+      <section className="typeform-shell w-full">
+        <div className="typeform-card">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight text-[color:var(--text)]">Beautiful, mobile-ready webinar forms</h1>
+              <p className="mt-2 max-w-2xl text-sm text-[color:var(--muted)]">Create intuitive, Typeform-style flows with branching, scoring, and automatic webhook delivery — designed for conversion, accessible on any device.</p>
+            </div>
+            <div className="hidden sm:block">
+              <Button size="lg" className="cta-lg">Create your first form</Button>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <div className="progress-outer">
+              <div className="progress-inner" style={{ width: "35%" }} />
+            </div>
+            <div className="mt-3 flex items-center justify-between text-sm text-[color:var(--muted)]">
+              <div>5 steps • 2 mins</div>
+              <div>Mobile-first • Corporate-ready</div>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            {[
+              { t: "Sleek flows", d: "Question-by-question animations and progress to keep users engaged." },
+              { t: "Brandable", d: "Upload logo, set accent colors, and match your corporate identity." },
+              { t: "Webhooks", d: "Send submissions to your app with tags and retries." },
+            ].map((f) => (
+              <div key={f.t} className="rounded-xl border border-gray-100 bg-[color:var(--card)] p-4">
+                <h3 className="font-semibold text-[color:var(--text)]">{f.t}</h3>
+                <p className="mt-1 text-sm text-[color:var(--muted)]">{f.d}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 flex items-center justify-center gap-3 sm:hidden">
+            <Link href="/signup"><Button size="lg" className="w-full">Get started free</Button></Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full">
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div className="rounded-xl p-6 bg-white shadow">
+            <h3 className="text-lg font-semibold">Typeform-style interactions</h3>
+            <p className="mt-2 text-sm text-[color:var(--muted)]">We show one question at a time with smooth transitions, micro-animations, and a clear progress bar to increase completion rates.</p>
+          </div>
+          <div className="rounded-xl p-6 bg-white shadow">
+            <h3 className="text-lg font-semibold">Powerful admin</h3>
+            <p className="mt-2 text-sm text-[color:var(--muted)]">Build questions, event-days, tags, and webhooks — all in a responsive admin panel built for mobile and desktop.</p>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

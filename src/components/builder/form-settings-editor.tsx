@@ -64,41 +64,54 @@ export function FormSettingsEditor(p: Props) {
 
       {/* Branding */}
       <Card className="max-w-3xl p-6">
-        <h2 className="text-lg font-semibold text-gray-900">Branding & frontend</h2>
+        <h2 className="text-lg font-semibold text-[color:var(--text)]">Branding & frontend</h2>
         <div className="mt-4 flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="logo">Logo URL</Label>
-            <Input
-              id="logo"
-              type="url"
-              placeholder="https://example.com/logo.png"
-              value={p.logoUrl}
-              disabled={!logoAllowed || themeAllowed === false && false}
-              onChange={(e) => p.setLogoUrl(e.target.value)}
-            />
-            {!logoAllowed && (
-              <Badge className="mt-1 w-fit bg-amber-100 text-amber-800">Logo upload requires a paid plan</Badge>
-            )}
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="accent">Accent color</Label>
-            <div className="flex items-center gap-2">
-              <input
-                id="accent"
-                type="color"
-                value={p.accentColor}
-                disabled={!themeAllowed}
-                onChange={(e) => p.setAccentColor(e.target.value)}
-                className="h-10 w-14 cursor-pointer rounded border border-gray-300"
-              />
-              <Input value={p.accentColor} disabled={!themeAllowed} onChange={(e) => {
-                const v = e.target.value;
-                if (/^#[0-9a-fA-F]{0,6}$/.test(v)) p.setAccentColor(v);
-              }} className="w-28 font-mono" />
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0">
+              <div className="h-16 w-16 rounded-md bg-[color:var(--brand-500)] center text-white font-bold">Logo</div>
             </div>
-            {!themeAllowed && (
-              <Badge className="mt-1 w-fit bg-amber-100 text-amber-800">Custom theme requires a paid plan</Badge>
-            )}
+            <div className="flex-1 flex flex-col gap-2">
+              <Label htmlFor="logo">Logo URL</Label>
+              <Input
+                id="logo"
+                type="url"
+                placeholder="https://example.com/logo.png"
+                value={p.logoUrl}
+                disabled={!logoAllowed}
+                onChange={(e) => p.setLogoUrl(e.target.value)}
+              />
+              {!logoAllowed && <Badge className="mt-1 w-fit bg-amber-100 text-amber-800">Logo upload requires a paid plan</Badge>}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="accent">Accent color</Label>
+              <div className="mt-2 flex items-center gap-2">
+                <input
+                  id="accent"
+                  type="color"
+                  value={p.accentColor}
+                  disabled={!themeAllowed}
+                  onChange={(e) => p.setAccentColor(e.target.value)}
+                  className="h-10 w-14 cursor-pointer rounded border border-gray-300"
+                />
+                <Input value={p.accentColor} disabled={!themeAllowed} onChange={(e) => {
+                  const v = e.target.value;
+                  if (/^#[0-9a-fA-F]{0,6}$/.test(v)) p.setAccentColor(v);
+                }} className="w-28 font-mono" />
+              </div>
+              {!themeAllowed && <Badge className="mt-1 w-fit bg-amber-100 text-amber-800">Custom theme requires a paid plan</Badge>}
+            </div>
+
+            <div>
+              <Label>Frontend style</Label>
+              <div className="mt-2 flex gap-2">
+                <button className="rounded-lg border border-gray-200 p-2 text-sm">Typeform</button>
+                <button className="rounded-lg border border-gray-200 p-2 text-sm">Compact</button>
+                <button className="rounded-lg border border-gray-200 p-2 text-sm">Inline</button>
+              </div>
+            </div>
           </div>
         </div>
       </Card>

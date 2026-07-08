@@ -8,7 +8,7 @@ import type { SubmitFormInput } from "@/lib/validations";
 type Option = { id: string; label: Record<string, string>; points: number };
 type Question = {
   id: string;
-  type: "TEXT" | "TEXTAREA" | "CHOICE" | "MULTI" | "SCALE" | "RATING";
+  type: "TEXT" | "TEXTAREA" | "CHOICE" | "MULTI" | "SCALE" | "RATING" | "EMAIL" | "PHONE" | "DATE" | "FILE";
   label: Record<string, string>;
   helpText: Record<string, string> | null;
   required: boolean;
@@ -43,6 +43,9 @@ export function PublicForm({ form, enabledLocales }: { form: Form; enabledLocale
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [progress, setProgress] = useState<number>(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(0); // for one-question flow
+
 
   const accent = form.accentColor || "#2563eb";
 
@@ -74,6 +77,18 @@ export function PublicForm({ form, enabledLocales }: { form: Form; enabledLocale
   function setAnswer(qid: string, value: string | number | null, optionIds: string[] = [], points = 0) {
     setAnswers((prev) => ({ ...prev, [qid]: { value, optionIds, points } }));
     setValidationErrors((prev) => { const n = { ...prev }; delete n[qid]; return n; });
+    // update progress
+    const total = visibleQuestions.length || 1;
+    const answered = Object.keys(answers).length + 1;
+    setProgress(Math.round((answered / total) * 100));
+  }
+
+  function next() {
+    setCurrentIndex((i) => Math.min(i + 1, visibleQuestions.length - 1));
+  }
+
+  function prev() {
+    setCurrentIndex((i) => Math.max(i - 1, 0));
   }
 
   function toggleOption(q: Question, optId: string) {
@@ -154,6 +169,12 @@ export function PublicForm({ form, enabledLocales }: { form: Form; enabledLocale
   return (
     <Shell form={form} locale={locale} setLocale={setLocale} accent={accent} enabledLocales={enabledLocales}>
       <form onSubmit={submit} className="mx-auto flex max-w-xl flex-col gap-6 pb-12">
+        <div className="w-full">
+          <div className="progress-outer">
+            <div className="progress-inner" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+
         {/* Event day selector */}
         {form.eventDays.length > 0 && (
           <Card className="p-5">
@@ -184,24 +205,38 @@ export function PublicForm({ form, enabledLocales }: { form: Form; enabledLocale
           </Card>
         )}
 
-        {/* Questions */}
-        {visibleQuestions.map((q) => (
-          <Card key={q.id} className="p-5" data-error={validationErrors[q.id] ? "true" : undefined}>
-            <Label className="mb-1 block">
-              {t(q.label, locale, t(q.label, "en"))}
-              {q.required && <span style={{ color: accent }}> *</span>}
-            </Label>
-            {q.helpText && (q.helpText.en || q.helpText.es) && (
-              <p className="mb-3 text-sm text-gray-500">{t(q.helpText, locale)}</p>
-            )}
+        {/* Questions — one at a time flow for engagement on mobile */}
+        {visibleQuestions.length > 0 && (
+          <div className="relative">
+            {visibleQuestions.map((q, idx) => (
+              <div key={q.id} className={"transition-transform duration-320 " + (idx === currentIndex ? "opacity-100 translate-x-0" : idx < currentIndex ? "opacity-0 -translate-x-6 absolute left-0 top-0 w-full" : "opacity-0 translate-x-6 absolute left-0 top-0 w-full")}>
+                <Card className="p-5" data-error={validationErrors[q.id] ? "true" : undefined}>
+                  <Label className="mb-1 block">
+                    {t(q.label, locale, t(q.label, "en"))}
+                    {q.required && <span style={{ color: accent }}> *</span>}
+                  </Label>
+                  {q.helpText && (q.helpText.en || q.helpText.es) && (
+                    <p className="mb-3 text-sm text-gray-500">{t(q.helpText, locale)}</p>
+                  )}
 
-            {renderQuestion(q, answers[q.id], (v, ids, pts) => setAnswer(q.id, v, ids, pts), (optId) => toggleOption(q, optId), accent, locale)}
+                  {renderQuestion(q, answers[q.id], (v, ids, pts) => setAnswer(q.id, v, ids, pts), (optId) => toggleOption(q, optId), accent, locale)}
 
-            {validationErrors[q.id] && (
-              <p className="mt-2 text-xs text-red-600">{validationErrors[q.id]}</p>
-            )}
-          </Card>
-        ))}
+                  {validationErrors[q.id] && (
+                    <p className="mt-2 text-xs text-red-600">{validationErrors[q.id]}</p>
+                  )}
+                </Card>
+              </div>
+            ))}
+
+            <div className="mt-4 flex items-center justify-between">
+              <Button variant="secondary" onClick={prev} disabled={currentIndex === 0}>Back</Button>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-[color:var(--muted)]">{currentIndex + 1}/{visibleQuestions.length}</span>
+                <Button onClick={next} disabled={currentIndex === visibleQuestions.length - 1}>Next</Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
@@ -289,6 +324,37 @@ function renderQuestion(
       return <Input value={answer?.value ?? ""} onChange={(e) => setValue(e.target.value)} />;
     case "TEXTAREA":
       return <Textarea rows={4} value={answer?.value ?? ""} onChange={(e) => setValue(e.target.value)} />;
+    case "EMAIL":
+      return <Input type="email" value={answer?.value ?? ""} onChange={(e) => setValue(e.target.value)} placeholder="you@company.com" />;
+    case "PHONE":
+      return <Input type="tel" value={answer?.value ?? ""} onChange={(e) => setValue(e.target.value)} placeholder="+1 555 555 5555" />;
+    case "DATE":
+      return <Input type="date" value={answer?.value ?? ""} onChange={(e) => setValue(e.target.value)} />;
+    case "FILE":
+      return (
+        <div>
+          <input
+            type="file"
+            onChange={async (e) => {
+              const f = e.target.files?.[0];
+              if (!f) return setValue(null, [], 0);
+              // limit small uploads (2MB)
+              if (f.size > 2 * 1024 * 1024) return setValue(null, [], 0);
+              const data = await new Promise<string | null>((res) => {
+                const r = new FileReader();
+                r.onload = () => res(typeof r.result === "string" ? r.result : null);
+                r.onerror = () => res(null);
+                r.readAsDataURL(f);
+              });
+              if (!data) return setValue(null, [], 0);
+              setValue(data, [], 0);
+            }}
+          />
+          {answer?.value && typeof answer.value === "string" && answer.value.startsWith("data:") && (
+            <div className="mt-2 text-sm text-gray-500">Uploaded</div>
+          )}
+        </div>
+      );
     case "CHOICE":
       return (
         <div className="flex flex-col gap-2">

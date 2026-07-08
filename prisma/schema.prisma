@@ -73,6 +73,10 @@ enum QuestionType {
   MULTI       // multiple-choice (checkbox)
   SCALE       // numeric scale (e.g. 1-5 / NPS)
   RATING      // star rating 1-5
+  EMAIL       // email field
+  PHONE       // phone number
+  DATE        // date picker
+  FILE        // uploaded file (stored as data URL)
 }
 
 model Question {
