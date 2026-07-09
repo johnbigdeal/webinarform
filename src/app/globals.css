@@ -55,7 +55,16 @@
   --radius-lg: 12px;
 }
 
-/* Utility tokens used across components */
+/* Global surface & typography */
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Cards */
 .card {
   background: var(--card);
   border-radius: var(--radius-lg);
@@ -64,8 +73,7 @@
   color: var(--text);
 }
 
-/* Danger card (used for delete zones) — overrides when border-red classes are used */
-.card.border-red-200,
+/* Danger card (used for delete zones) */
 .card[data-danger="true"] {
   background: linear-gradient(180deg, var(--danger-surface), rgba(0,0,0,0));
   border-color: rgba(220,38,38,0.12);
@@ -95,120 +103,42 @@
 }
 
 /* Question transitions */
-.q-enter {
-  transform: translateX(20px) scale(0.995);
-  opacity: 0;
-}
-.q-enter-active {
-  transform: translateX(0) scale(1);
-  opacity: 1;
-}
-.q-exit {
-  transform: translateX(-20px) scale(0.995);
-  opacity: 0;
-}
+.q-enter { transform: translateX(20px) scale(0.995); opacity: 0; }
+.q-enter-active { transform: translateX(0) scale(1); opacity: 1; }
+.q-exit { transform: translateX(-20px) scale(0.995); opacity: 0; }
 
-/* Large CTA */
-.cta-lg {
-  height: 56px;
-  border-radius: 12px;
-  padding: 0 1.25rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
+/* CTA */
+.cta-lg { height: 56px; border-radius: 12px; padding: 0 1.25rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
 
 /* Progress bar */
-.progress-outer {
-  height: 8px;
-  background: linear-gradient(90deg, rgba(15,23,42,0.06), rgba(15,23,42,0.03));
-  border-radius: 999px;
-  overflow: hidden;
-}
-.progress-inner {
-  height: 100%;
-  background: linear-gradient(90deg, var(--brand-500), var(--brand-600));
-  transition: width 420ms cubic-bezier(.2,.9,.25,1);
-}
+.progress-outer { height: 8px; background: linear-gradient(90deg, rgba(15,23,42,0.06), rgba(15,23,42,0.03)); border-radius: 999px; overflow: hidden; }
+.progress-inner { height: 100%; background: linear-gradient(90deg, var(--brand-500), var(--brand-600)); transition: width 420ms cubic-bezier(.2,.9,.25,1); }
 
 /* Mobile friendly */
-@media (max-width: 640px) {
-  .typeform-card { padding: 1.25rem; border-radius: 10px; }
-}
+@media (max-width: 640px) { .typeform-card { padding: 1.25rem; border-radius: 10px; } }
 
-/* Small helpers */
+/* Helpers */
 .center { display: flex; align-items: center; justify-content: center; }
 
-body { background: var(--background); color: var(--text); font-family: var(--font-sans); }
+/* Map common Tailwind neutrals to design tokens to keep consistent brand colors */
+.bg-white { background-color: var(--card) !important; }
+.text-gray-900, .text-gray-800 { color: var(--text) !important; }
+.text-gray-700, .text-gray-600, .text-gray-500, .text-gray-400 { color: var(--muted) !important; }
+.border-gray-200 { border-color: var(--card-border) !important; }
+.bg-gray-50 { background-color: var(--surface-contrast) !important; }
 
-/* Typeform-like shell */
-.typeform-shell {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  background: linear-gradient(180deg, rgba(37,99,235,0.03), transparent 40%);
-  padding: 2.5rem 1rem;
-}
+/* Brand */
+.bg-blue-600, .bg-blue-500 { background-color: var(--brand-500) !important; }
+.text-blue-600, .text-blue-700, .text-blue-500 { color: var(--brand-600) !important; }
+.border-blue-600 { border-color: var(--brand-500) !important; }
+.hover\:bg-gray-50:hover { background-color: var(--surface-contrast) !important; }
+.focus-visible\:outline-blue-600:focus { outline-color: var(--brand-500) !important; }
 
-.typeform-card {
-  width: 100%;
-  max-width: 720px;
-  background: var(--card);
-  border-radius: 16px;
-  padding: 2.25rem;
-  box-shadow: 0 10px 30px rgba(16,24,40,0.08);
-  transition: transform 320ms cubic-bezier(.2,.9,.25,1), opacity 240ms ease;
-}
+/* Accessibility: ensure buttons have sufficient contrast */
+button, .btn { color: #fff; }
 
-/* Question transitions */
-.q-enter {
-  transform: translateX(20px) scale(0.995);
-  opacity: 0;
-}
-.q-enter-active {
-  transform: translateX(0) scale(1);
-  opacity: 1;
-}
-.q-exit {
-  transform: translateX(-20px) scale(0.995);
-  opacity: 0;
-}
+/* Forms */
+input, textarea, select { color: var(--text); }
 
-/* Large CTA */
-.cta-lg {
-  height: 56px;
-  border-radius: 12px;
-  padding: 0 1.25rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-/* Progress bar */
-.progress-outer {
-  height: 8px;
-  background: linear-gradient(90deg, rgba(15,23,42,0.06), rgba(15,23,42,0.03));
-  border-radius: 999px;
-  overflow: hidden;
-}
-.progress-inner {
-  height: 100%;
-  background: linear-gradient(90deg, var(--brand-500), var(--brand-600));
-  transition: width 420ms cubic-bezier(.2,.9,.25,1);
-}
-
-/* Mobile friendly */
-@media (max-width: 640px) {
-  .typeform-card { padding: 1.25rem; border-radius: 10px; }
-}
-
-/* Small helpers */
-.center { display: flex; align-items: center; justify-content: center; }
-
-body { background: var(--background); color: var(--text); font-family: var(--font-sans); }
+/* Small visual polish */
+img[alt][src] { max-height: 64px; }
