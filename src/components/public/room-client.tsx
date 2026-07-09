@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Button, Input, Card, Badge, Label } from "@/components/ui";
+import { Button, Card, Badge } from "@/components/ui";
 import { t } from "@/lib/i18n";
 
 type ChatMessage = {
@@ -220,15 +220,15 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
                   </p>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="nickname" className="text-gray-400">Nombre / Name</Label>
-                  <Input
+                  <label htmlFor="nickname" className="text-xs font-semibold text-gray-400">Nombre / Name</label>
+                  <input
                     id="nickname"
                     type="text"
                     required
                     placeholder="Tu nombre..."
                     value={inputName}
                     onChange={(e) => setInputName(e.target.value)}
-                    className="bg-gray-900 border-gray-800 text-white placeholder:text-gray-600 focus:shadow-none focus:border-blue-500"
+                    className="h-11 w-full rounded-lg border border-gray-800 bg-gray-900 px-3 text-sm text-white placeholder:text-gray-500 transition-colors focus:border-blue-500 focus:outline-none"
                   />
                 </div>
                 <Button type="submit" className="w-full h-10 text-sm">
@@ -292,13 +292,13 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
                   </div>
                 )}
                 <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-                  <Input
+                  <input
                     type="text"
                     required
                     placeholder="Envía un mensaje... / Write message..."
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
-                    className="bg-gray-900 border-gray-800 text-white placeholder:text-gray-600 focus:shadow-none focus:border-blue-500 h-10 text-xs"
+                    className="flex-1 h-10 rounded-lg border border-gray-800 bg-gray-900 px-3 text-xs text-white placeholder:text-gray-500 transition-colors focus:border-blue-500 focus:outline-none"
                   />
                   <Button type="submit" size="sm" className="h-10 px-3 bg-blue-600 hover:bg-blue-700">
                     Send
