@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateSlug } from "@/lib/utils";
-import { isWithinLimit } from "@/lib/plans";
+import { isWithinLimit, limitsFor } from "@/lib/plans";
 import { formSchema } from "@/lib/validations";
 import type { FormInput } from "@/lib/validations";
 import { ENABLED_LOCALES_KEY } from "@/lib/settings";
@@ -71,8 +71,9 @@ export async function updateFormAction(formId: string, input: FormInput) {
       : data.eventDays;
 
   // Question count limit
-  if (data.questions.length > 0 && !isWithinLimit(user.plan, "questionsPerForm", data.questions.length - 1)) {
-    return { error: `Your plan allows up to ${data.questions.length - 1} questions fewer than this.` };
+  const questionLimit = limitsFor(user.plan).questionsPerForm;
+  if (data.questions.length > questionLimit) {
+    return { error: `Your plan allows up to ${questionLimit} questions.` };
   }
 
   // Slug uniqueness

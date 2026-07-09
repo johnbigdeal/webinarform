@@ -240,11 +240,13 @@ export function PublicForm({ form, enabledLocales }: { form: Form; enabledLocale
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
-        <Button type="submit" size="lg" disabled={submitting} style={{ backgroundColor: accent, borderColor: accent }}>
-          {submitting
-            ? locale === "es" ? "Enviando…" : "Submitting…"
-            : t(form.submitLabel, locale, locale === "es" ? "Enviar" : "Submit")}
-        </Button>
+        {currentIndex === visibleQuestions.length - 1 && (
+          <Button type="submit" size="lg" disabled={submitting} style={{ backgroundColor: accent, borderColor: accent }}>
+            {submitting
+              ? locale === "es" ? "Enviando…" : "Submitting…"
+              : t(form.submitLabel, locale, locale === "es" ? "Enviar" : "Submit")}
+          </Button>
+        )}
       </form>
     </Shell>
   );

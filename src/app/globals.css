@@ -135,7 +135,7 @@ body {
 .focus-visible\:outline-blue-600:focus { outline-color: var(--brand-500) !important; }
 
 /* Accessibility: ensure buttons have sufficient contrast */
-button, .btn { color: #fff; }
+.btn { color: #fff; }
 
 /* Forms */
 input, textarea, select { color: var(--text); }
