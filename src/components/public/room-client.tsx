@@ -131,9 +131,9 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-950 text-gray-100 font-sans">
+    <div className="flex min-h-screen flex-col bg-slate-950 text-slate-100 font-sans">
       {/* Top Header */}
-      <header className="flex items-center justify-between border-b border-gray-900 bg-gray-950 px-6 py-4">
+      <header className="flex items-center justify-between border-b border-slate-900 bg-slate-950 px-6 py-4">
         <div className="flex items-center gap-3">
           <div
             className="h-10 w-10 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-md"
@@ -146,7 +146,7 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
               {t(form.title as never, "en", "Live Webinar")}
             </h1>
             {form.description && (
-              <p className="text-xs text-gray-400 truncate max-w-sm sm:max-w-md">
+              <p className="text-xs text-slate-400 truncate max-w-sm sm:max-w-md">
                 {t(form.description as never, "en")}
               </p>
             )}
@@ -166,7 +166,7 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
         {/* Left Side: Video Player Container */}
         <div className="flex flex-1 flex-col items-center justify-center bg-black p-4 sm:p-6 lg:p-8">
           {form.youtubeVideoId ? (
-            <div className="relative aspect-video w-full max-w-5xl rounded-xl overflow-hidden shadow-2xl border border-gray-900">
+            <div className="relative aspect-video w-full max-w-5xl rounded-xl overflow-hidden shadow-2xl border border-slate-900">
               <iframe
                 width="100%"
                 height="100%"
@@ -180,11 +180,11 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
             </div>
           ) : (
             <div className="text-center py-20 flex flex-col items-center gap-4">
-              <div className="h-16 w-16 rounded-full bg-gray-900 flex items-center justify-center animate-ping text-xl">
+              <div className="h-16 w-16 rounded-full bg-slate-900 flex items-center justify-center animate-ping text-xl">
                 📺
               </div>
-              <h2 className="text-xl font-bold text-gray-200">El directo comenzará pronto</h2>
-              <p className="text-sm text-gray-500 max-w-xs">
+              <h2 className="text-xl font-bold text-slate-200">El directo comenzará pronto</h2>
+              <p className="text-sm text-slate-500 max-w-xs">
                 La transmisión en vivo aún no ha sido inicializada por el organizador. Quédate en la sala, comenzará en breve.
               </p>
             </div>
@@ -192,13 +192,13 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
         </div>
 
         {/* Right Side: Chat Panel */}
-        <div className="w-full lg:w-96 flex flex-col border-t lg:border-t-0 lg:border-l border-gray-900 bg-gray-950/80 backdrop-blur h-[450px] lg:h-auto overflow-hidden">
-          <div className="flex items-center justify-between border-b border-gray-900 px-4 py-3 bg-gray-950">
-            <h2 className="text-sm font-semibold text-gray-200 uppercase tracking-wide">Live Chat</h2>
+        <div className="w-full lg:w-96 flex flex-col border-t lg:border-t-0 lg:border-l border-slate-900 bg-slate-950/80 backdrop-blur h-[450px] lg:h-auto overflow-hidden">
+          <div className="flex items-center justify-between border-b border-slate-900 px-4 py-3 bg-slate-950">
+            <h2 className="text-sm font-semibold text-slate-200 uppercase tracking-wide">Live Chat</h2>
             {userName && form.chatEnabled && (
               <button
                 onClick={handleLeaveChat}
-                className="text-[10px] text-gray-500 hover:text-gray-300 underline"
+                className="text-[10px] text-slate-500 hover:text-slate-300 underline"
               >
                 Cambiar nombre / Change name
               </button>
@@ -206,21 +206,21 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
           </div>
 
           {!form.chatEnabled ? (
-            <div className="flex-1 flex items-center justify-center p-6 text-center text-gray-500 text-sm">
+            <div className="flex-1 flex items-center justify-center p-6 text-center text-slate-500 text-sm">
               💬 Chat is disabled for this webinar.
             </div>
           ) : !userName ? (
             /* Name Entry Screen */
-            <div className="flex-1 flex flex-col justify-center p-6 bg-gray-950">
+            <div className="flex-1 flex flex-col justify-center p-6 bg-slate-950">
               <form onSubmit={handleNameSubmit} className="flex flex-col gap-4">
                 <div>
                   <h3 className="text-sm font-semibold text-white">Únete al chat / Join the chat</h3>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-slate-500 mt-1">
                     Ingresa tu nombre para poder enviar mensajes e interactuar en directo.
                   </p>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="nickname" className="text-xs font-semibold text-gray-400">Nombre / Name</label>
+                  <label htmlFor="nickname" className="text-xs font-semibold text-slate-300">Nombre / Name</label>
                   <input
                     id="nickname"
                     type="text"
@@ -228,7 +228,8 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
                     placeholder="Tu nombre..."
                     value={inputName}
                     onChange={(e) => setInputName(e.target.value)}
-                    className="h-11 w-full rounded-lg border border-gray-800 bg-gray-900 px-3 text-sm text-white placeholder:text-gray-500 transition-colors focus:border-blue-500 focus:outline-none"
+                    style={{ color: "#ffffff" }}
+                    className="h-11 w-full rounded-lg border border-slate-800 bg-slate-900 px-3 text-sm placeholder:text-slate-500 transition-colors focus:border-blue-500 focus:outline-none"
                   />
                 </div>
                 <Button type="submit" className="w-full h-10 text-sm">
@@ -240,14 +241,14 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
             /* Chat Stream Room */
             <div className="flex-1 flex flex-col min-h-0">
               {/* Message History Feed */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-gray-800">
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-slate-800">
                 {messages.map((msg) => (
                   <div key={msg.id} className="flex flex-col items-start gap-1">
                     <div className="flex items-center gap-1.5">
                       <span
                         className={
                           "text-xs font-bold " +
-                          (msg.isAdmin ? "text-blue-400 font-extrabold" : "text-gray-400")
+                          (msg.isAdmin ? "text-blue-400 font-extrabold" : "text-slate-300")
                         }
                       >
                         {msg.senderName}
@@ -257,7 +258,7 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
                           Host
                         </span>
                       )}
-                      <span className="text-[9px] text-gray-600">
+                      <span className="text-[9px] text-slate-500">
                         {new Date(msg.createdAt).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -269,7 +270,7 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
                         "text-sm rounded-lg px-3 py-2 max-w-[85%] break-words " +
                         (msg.isAdmin
                           ? "bg-blue-950/40 border border-blue-900 text-blue-100"
-                          : "bg-gray-900 text-gray-200")
+                          : "bg-slate-900 text-slate-100")
                       }
                     >
                       {msg.message}
@@ -280,14 +281,14 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
               </div>
 
               {/* Status and Input Area */}
-              <div className="p-3 border-t border-gray-900 bg-gray-950">
+              <div className="p-3 border-t border-slate-900 bg-slate-950">
                 {error && (
                   <div className="text-[10px] text-red-500 pb-2 text-center animate-pulse">
                     {error}
                   </div>
                 )}
                 {!connected && !error && (
-                  <div className="text-[10px] text-gray-500 pb-2 text-center">
+                  <div className="text-[10px] text-slate-500 pb-2 text-center">
                     Connecting to server...
                   </div>
                 )}
@@ -298,7 +299,8 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
                     placeholder="Envía un mensaje... / Write message..."
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
-                    className="flex-1 h-10 rounded-lg border border-gray-800 bg-gray-900 px-3 text-xs text-white placeholder:text-gray-500 transition-colors focus:border-blue-500 focus:outline-none"
+                    style={{ color: "#ffffff" }}
+                    className="flex-1 h-10 rounded-lg border border-slate-800 bg-slate-900 px-3 text-xs placeholder:text-slate-500 transition-colors focus:border-blue-500 focus:outline-none"
                   />
                   <Button type="submit" size="sm" className="h-10 px-3 bg-blue-600 hover:bg-blue-700">
                     Send
