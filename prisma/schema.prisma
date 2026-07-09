@@ -54,12 +54,16 @@ model Form {
   // Webhook
   webhookUrl  String?
   webhookEnabled Boolean @default(true)
+  webinarEnabled Boolean @default(true)
+  youtubeVideoId String?
+  chatEnabled    Boolean @default(true)
   // Tags
   tags        FormTag[]
   // Content
   questions   Question[]
   eventDays   EventDay[]
   submissions Submission[]
+  chatMessages ChatMessage[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -182,3 +186,19 @@ model AuditLog {
   @@index([actorId])
   @@index([createdAt])
 }
+
+// ───────────────────────────── Chat messages ─────────────────────────────
+
+model ChatMessage {
+  id         String   @id @default(cuid())
+  formId     String
+  form       Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  senderName String
+  message    String
+  isAdmin    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([formId])
+  @@index([createdAt])
+}
+

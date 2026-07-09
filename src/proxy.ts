@@ -13,6 +13,7 @@ const PUBLIC_PREFIXES = ["/f/", "/api/auth/", "/api/submit/"]; // public form + 
 function isPublic(pathname: string): boolean {
   if (PUBLIC_PATHS.includes(pathname)) return true;
   if (PUBLIC_PREFIXES.some((p) => pathname.startsWith(p))) return true;
+  if (pathname.match(/^\/api\/forms\/[^/]+\/chat(\/stream)?$/)) return true;
   if (pathname.startsWith("/_next") || pathname.includes(".")) return true;
   return false;
 }

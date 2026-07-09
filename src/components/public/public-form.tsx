@@ -31,6 +31,9 @@ type Form = {
   accentColor: string;
   questions: Question[];
   eventDays: EventDay[];
+  webinarEnabled?: boolean;
+  youtubeVideoId?: string | null;
+  chatEnabled?: boolean;
 };
 
 type AnswerMap = Record<string, { value?: string | number | null; optionIds: string[]; points: number }>;
@@ -156,11 +159,20 @@ export function PublicForm({ form, enabledLocales }: { form: Form; enabledLocale
   if (done) {
     return (
       <Shell form={form} locale={locale} setLocale={setLocale} accent={accent} enabledLocales={enabledLocales}>
-        <Card className="mx-auto max-w-xl p-8 text-center">
-          <div className="mb-3 text-4xl">✅</div>
+        <Card className="mx-auto max-w-xl p-8 text-center flex flex-col items-center gap-4">
+          <div className="text-4xl">✅</div>
           <h2 className="text-xl font-bold text-gray-900">
             {t(form.thankYou, locale, locale === "es" ? "¡Gracias!" : "Thank you!")}
           </h2>
+          {form.webinarEnabled && (
+            <div className="mt-4 w-full">
+              <a href={`/f/${form.slug}/room`} className="block w-full">
+                <Button size="lg" className="w-full" style={{ backgroundColor: accent, borderColor: accent }}>
+                  {locale === "es" ? "Ir a la sala del Webinar" : "Go to Webinar Room"}
+                </Button>
+              </a>
+            </div>
+          )}
         </Card>
       </Shell>
     );

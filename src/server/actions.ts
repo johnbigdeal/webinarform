@@ -94,6 +94,9 @@ export async function updateFormAction(formId: string, input: FormInput) {
       accentColor,
       webhookUrl,
       webhookEnabled: data.webhookEnabled,
+      webinarEnabled: data.webinarEnabled,
+      youtubeVideoId: data.youtubeVideoId ?? null,
+      chatEnabled: data.chatEnabled,
       tags: {
         deleteMany: {},
         create: tags.map((tag) => ({ tag })),

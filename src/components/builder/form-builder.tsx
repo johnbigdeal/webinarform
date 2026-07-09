@@ -7,6 +7,7 @@ import { QuestionsEditor } from "@/components/builder/questions-editor";
 import { EventDaysEditor } from "@/components/builder/event-days-editor";
 import { FormSettingsEditor } from "@/components/builder/form-settings-editor";
 import { SubmissionsView } from "@/components/builder/submissions-view";
+import { WebinarSettingsEditor } from "@/components/builder/webinar-settings-editor";
 import { updateFormAction, deleteFormAction } from "@/server/actions";
 import type { FormInput, QuestionInput, EventDayInput } from "@/lib/validations";
 import type { Plan } from "@/generated/prisma/client";
@@ -23,17 +24,21 @@ type Form = {
   accentColor: string;
   webhookUrl: string | null;
   webhookEnabled: boolean;
+  webinarEnabled?: boolean;
+  youtubeVideoId?: string | null;
+  chatEnabled?: boolean;
   questions: QuestionInput[];
   eventDays: EventDayInput[];
   tags: { id: string; tag: string }[];
 };
 
-type Tab = "questions" | "events" | "design" | "webhook" | "submissions";
+type Tab = "questions" | "events" | "design" | "webinar" | "webhook" | "submissions";
 
 const tabs: { id: Tab; label: string }[] = [
   { id: "questions", label: "Questions" },
   { id: "events", label: "Event days" },
   { id: "design", label: "Design & text" },
+  { id: "webinar", label: "Webinar Room" },
   { id: "webhook", label: "Webhook" },
   { id: "submissions", label: "Submissions" },
 ];
@@ -60,6 +65,9 @@ export function FormBuilder({ form, userPlan, enabledLocales }: { form: Form; us
   const [accentColor, setAccentColor] = useState(form.accentColor);
   const [webhookUrl, setWebhookUrl] = useState(form.webhookUrl ?? "");
   const [webhookEnabled, setWebhookEnabled] = useState(form.webhookEnabled);
+  const [webinarEnabled, setWebinarEnabled] = useState(form.webinarEnabled ?? true);
+  const [youtubeVideoId, setYoutubeVideoId] = useState(form.youtubeVideoId ?? "");
+  const [chatEnabled, setChatEnabled] = useState(form.chatEnabled ?? true);
   const [tags, setTags] = useState<string[]>(form.tags.map((t) => t.tag));
   const [questions, setQuestions] = useState<QuestionInput[]>(form.questions);
   const [eventDays, setEventDays] = useState<EventDayInput[]>(form.eventDays);
@@ -78,6 +86,9 @@ export function FormBuilder({ form, userPlan, enabledLocales }: { form: Form; us
       accentColor,
       webhookUrl: webhookUrl || undefined,
       webhookEnabled,
+      webinarEnabled,
+      youtubeVideoId: youtubeVideoId || undefined,
+      chatEnabled,
       questions: questions.map((q, i) => ({ ...q, order: i })),
       eventDays: eventDays.map((d, i) => ({ ...d, order: i })),
       tags,
@@ -222,6 +233,19 @@ export function FormBuilder({ form, userPlan, enabledLocales }: { form: Form; us
 }`}</pre>
           </div>
         </Card>
+      )}
+      {tab === "webinar" && (
+        <WebinarSettingsEditor
+          formId={form.id}
+          slug={slug}
+          webinarEnabled={webinarEnabled}
+          setWebinarEnabled={setWebinarEnabled}
+          youtubeVideoId={youtubeVideoId}
+          setYoutubeVideoId={setYoutubeVideoId}
+          chatEnabled={chatEnabled}
+          setChatEnabled={setChatEnabled}
+          userPlan={userPlan}
+        />
       )}
       {tab === "submissions" && <SubmissionsView formId={form.id} />}
 

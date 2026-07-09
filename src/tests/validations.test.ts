@@ -45,6 +45,19 @@ describe("formSchema", () => {
     const r = formSchema.safeParse({ slug: "x", title: { en: "T" }, accentColor: "red" });
     expect(r.success).toBe(false);
   });
+  it("validates form with webinar settings", () => {
+    const r = formSchema.safeParse({
+      slug: "my-form",
+      title: { en: "My Form" },
+      webinarEnabled: true,
+      youtubeVideoId: "dQw4w9WgXcQ",
+      chatEnabled: false,
+    });
+    expect(r.success).toBe(true);
+    expect(r.data?.webinarEnabled).toBe(true);
+    expect(r.data?.youtubeVideoId).toBe("dQw4w9WgXcQ");
+    expect(r.data?.chatEnabled).toBe(false);
+  });
 });
 
 describe("questionSchema", () => {
