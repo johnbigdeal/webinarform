@@ -166,7 +166,7 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
         {/* Left Side: Video Player Container */}
         <div className="flex flex-1 flex-col items-center justify-center bg-black p-4 sm:p-6 lg:p-8">
           {form.youtubeVideoId ? (
-            <div className="relative aspect-video w-full max-w-5xl rounded-xl overflow-hidden shadow-2xl border border-slate-900">
+            <div className="relative aspect-video w-full max-w-none rounded-xl overflow-hidden shadow-2xl border border-slate-900">
               <iframe
                 width="100%"
                 height="100%"
@@ -192,7 +192,7 @@ export function WebinarRoomClient({ form }: { form: FormProps }) {
         </div>
 
         {/* Right Side: Chat Panel */}
-        <div className="w-full lg:w-96 flex flex-col border-t lg:border-t-0 lg:border-l border-slate-900 bg-slate-950/80 backdrop-blur h-[450px] lg:h-auto overflow-hidden">
+        <div className="w-full lg:w-80 flex flex-col border-t lg:border-t-0 lg:border-l border-slate-900 bg-slate-950/80 backdrop-blur h-[450px] lg:h-auto overflow-hidden">
           <div className="flex items-center justify-between border-b border-slate-900 px-4 py-3 bg-slate-950">
             <h2 className="text-sm font-semibold text-slate-200 uppercase tracking-wide">Live Chat</h2>
             {userName && form.chatEnabled && (
