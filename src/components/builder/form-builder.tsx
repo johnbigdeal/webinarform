@@ -74,14 +74,16 @@ export function FormBuilder({ form, userPlan, enabledLocales }: { form: Form; us
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   function buildInput(): FormInput {
-    const clean = (v: Record<string, string>) =>
-      Object.fromEntries(Object.entries(v).filter(([, s]) => s && s.trim())) as Record<string, string>;
+    const clean = (v: Record<string, string>) => {
+      const res = Object.fromEntries(Object.entries(v).filter(([, s]) => s && s.trim()));
+      return Object.keys(res).length > 0 ? res : undefined;
+    };
     return {
       slug,
       title: clean(title) as never,
-      description: clean(description) || undefined,
+      description: clean(description) as any,
       submitLabel: clean(submitLabel) as never,
-      thankYou: clean(thankYou) || undefined,
+      thankYou: clean(thankYou) as any,
       logoUrl: logoUrl || undefined,
       accentColor,
       webhookUrl: webhookUrl || undefined,
